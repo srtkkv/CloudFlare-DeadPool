@@ -1,0 +1,65 @@
+  Generic:
+    log:
+      type: gelf
+      server: localhost #gl-sb.corp.your.server
+      port: 12201
+      level: debug
+  WEB:
+    port: 9001
+    host: 0.0.0.0
+    base_url: /
+    access_token: WyI1NTE1MjhmNDMxY2Q3NTEwOTQxY2ZhYTgiLCI2Yjc4NTA4MzBlYzM0Y2NhZTdjZjIxNzlmZjhiNTA5ZSJd.B_bF8g.t1oUMxHr_fQfRUAF4aLpn2zjja0
+    name: "TEST SERVER"
+  WatchMan:
+    probe_status_folder: probe
+
+  probes:
+    FinDB:
+      module: mssql_probe
+      isEnabled: True
+      period: 5
+      query:
+        server: 'MSSQL.server'
+        user: 'SA'
+        pass: 'Pa$$w0rd'
+        db_name: 'master'
+        port: 1433
+        query: 'SELECT * FROM sys.databases;'
+      success_criteria:
+        master_exists:
+          type: exists
+          query: {'name': "master",'state': 1}
+    elastic:
+      module: url_probe
+      isEnabled: False
+      period: 3
+      query:
+         url: 'http://localhost:9200/_cat/health' #"localhost:9200/_cluster/health?wait_for_status=yellow&timeout=50s&pretty"
+         header: {}
+         query_type: get
+         timeout: 2
+      success_criteria:
+         body:
+            type: re_search
+            query: 'elasticsearch+ green+'
+         status:
+            type: status_in
+            query: [200]
+    mssql:
+     moduke: msmsql_probe
+     isEnabled: True
+     period: 5
+     query:
+       server: 'another.server'
+       user: 'user'
+       pass: 'pass'
+       query_type: connection   #select
+       select: "SELECT  [id],[val] FROM [tst].[dbo].[tst]" #SELECT GETDATE()
+     success_criteria:
+       body:
+         type: re_search
+         query: 'elasticsearch+ green+'
+       status:
+         type: status_in
+         query: [ 200 ]
+

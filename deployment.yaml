@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: deadpool
+spec:
+  ports:
+  - name: 9001-tcp
+    port: 9001
+    protocol: TCP
+    targetPort: 9001
+  selector:
+    com.docker.project: deadpool
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    com.docker.project: deadpool
+  name: deadpool
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      com.docker.project: deadpool
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        com.docker.project: deadpool
+    spec:
+      containers:
+      - image: srtkkv/deadpool:latest
+        name: deadpool
+        ports:
+        - containerPort: 9001
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+status: {}

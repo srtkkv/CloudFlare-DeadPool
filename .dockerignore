@@ -1,0 +1,9 @@
+/local/
+/venv/
+Dockerfile
+.gitignore
+README.md
+.idea
+.git
+.dockerignore
+**/*.pyc

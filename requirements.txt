@@ -1,0 +1,6 @@
+flask
+pyyaml
+requests
+logging-gelf
+pymssql
+pymssql
